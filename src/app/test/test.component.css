@@ -1,0 +1,9 @@
+#visualization {
+  border: solid 2px black;
+  height: calc(100vh - 36px);
+}
+
+/*canvas {*/
+  /*width: 100%;*/
+  /*height: 100%;*/
+/*}*/
