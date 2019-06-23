@@ -41,6 +41,8 @@ export class TestComponent implements OnInit {
   // }
   stage;
   layer;
+  overLayer;
+  stageScale = 1;
 
   ngOnInit() {
     // setTimeout(() => {
@@ -58,8 +60,9 @@ export class TestComponent implements OnInit {
 
     this.stage = new Konva.Stage({
       container: 'container',
-      width: width - 20,
-      height: height - 36
+      width: width - 36,
+      height: height - 36,
+      draggable: true
     });
 
     this.layer = new Konva.Layer(
@@ -70,24 +73,34 @@ export class TestComponent implements OnInit {
 
     let rect = new Konva.Rect({
       x: 50,
-      y: 50,
+      y: 25,
       width: 100,
       height: 50,
       fill: 'green',
       stroke: 'black',
       strokeWidth: 4,
-      draggable: true
+      draggable: true,
+      offset: {
+        x: 50,
+        y: 25
+      },
+      name: 'primal'
     });
 
     let rect2 = new Konva.Rect({
       x: 150,
-      y: 50,
+      y: 25,
       width: 100,
       height: 50,
       fill: 'blue',
       stroke: 'black',
       strokeWidth: 4,
-      draggable: true
+      draggable: true,
+      offset: {
+        x: 50,
+        y: 25
+      },
+      name: 'primal'
     });
 
     // add the shape to the layer
@@ -96,23 +109,54 @@ export class TestComponent implements OnInit {
 
     // add the layer to the stage
     this.stage.add(this.layer);
+
+    this.stage.on('wheel', e => {
+      e.evt.preventDefault();
+      this.stageScale =
+        e.evt.deltaY > 0 ? this.stageScale * 1.01 : this.stageScale / 1.01;
+
+      this.stage.scale({
+        x: this.stageScale,
+        y: this.stageScale
+      });
+
+      let primalRects = this.layer.find('.primal');
+      primalRects.forEach(primalRect => primalRect.scale({x: 1 / this.stageScale, y: 1 / this.stageScale}));
+      this.stage.draw();
+    });
   }
 
   addRectangle() {
     console.log('add');
     let rect2 = new Konva.Rect({
-      x: 150,
-      y: 50,
+      x: 100,
+      y: 0,
       width: 100,
       height: 50,
       fill: 'red',
       stroke: 'black',
       strokeWidth: 4,
-      draggable: true
+      draggable: true,
+      name: 'addedRect'
     });
+
+    rect2.on('click', e => {
+      console.log(e.target._id);
+      rect2.fill('pink');
+      rect2.stroke('green');
+      rect2.draw();
+  });
 
     // add the shape to the layer
     this.layer.add(rect2);
+    this.layer.draw();
+  }
+
+  removeAddedRectangles() {
+    // let pinks = this.layer.find();
+    let pinks = this.layer.find('.addedRect');
+    console.log(pinks);
+    pinks.forEach(pink => pink.destroy());
     this.layer.draw();
   }
 }
