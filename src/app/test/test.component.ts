@@ -42,6 +42,7 @@ export class TestComponent implements OnInit {
   stage;
   layer;
   overLayer;
+  text;
   stageScale = 1;
 
   ngOnInit() {
@@ -62,7 +63,9 @@ export class TestComponent implements OnInit {
       container: 'container',
       width: width - 36,
       height: height - 36,
-      draggable: true
+      draggable: true,
+      x: 100,
+      y: 100
     });
 
     this.layer = new Konva.Layer(
@@ -103,8 +106,18 @@ export class TestComponent implements OnInit {
       name: 'primal'
     });
 
+    this.text = new Konva.Text({
+      x: 10,
+      y: 10,
+      fontFamily: 'Calibri',
+      fontSize: 24,
+      text: '',
+      fill: 'black'
+    });
+
     // add the shape to the layer
     this.layer.add(rect);
+    this.layer.add(this.text);
     this.layer.add(rect2);
 
     // add the layer to the stage
@@ -158,5 +171,16 @@ export class TestComponent implements OnInit {
     console.log(pinks);
     pinks.forEach(pink => pink.destroy());
     this.layer.draw();
+  }
+
+  writeMessage(message) {
+    this.text.text(message);
+    this.layer.draw();
+  }
+
+  getFromApi() {
+    fetch('/koty')
+      .then(response => response.json())
+      .then((data) => console.log(data));
   }
 }
